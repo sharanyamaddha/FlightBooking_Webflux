@@ -1,12 +1,15 @@
 package com.flightwebflux.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.flightwebflux.dto.request.BookingRequest;
+import com.flightwebflux.dto.response.BookingResponse;
+import com.flightwebflux.dto.response.PassengerResponse;
 import com.flightwebflux.enums.BookingStatus;
 import com.flightwebflux.enums.TripType;
 import com.flightwebflux.exceptions.BusinessException;
@@ -52,6 +55,7 @@ public class BookingServiceImpl implements BookingService {
 				booking.setFlightId(flight.getFlightId());
 				booking.setBookerEmailId(request.getBookerEmailId());
 				booking.setStatus(BookingStatus.BOOKED);
+				booking.setTripType(request.getTripType());
 				booking.setBookingDateTime(LocalDateTime.now());
 				
 				
@@ -86,6 +90,55 @@ public class BookingServiceImpl implements BookingService {
 						        
 							});
 				});	
+	}
+	
+	
+	
+	@Override
+	public Mono<BookingResponse> getBookingByPnr(String pnr){
+		return bookingRepository.findByPnr(pnr)
+				.switchIfEmpty(Mono.error(new BusinessException("invalid PNR")))
+				.flatMap(this::mapToBookingResponse);
+	}
+	
+	private Mono<BookingResponse> mapToBookingResponse(Booking booking) {
+		Mono<List<Passenger>> passengersMono =
+	            passengerRepository.findByPnr(booking.getPnr()).collectList();
+
+	    Mono<Flight> flightMono =
+	            flightRepository.findById(booking.getFlightId());
+		
+	    return Mono.zip(flightMono, passengersMono)
+	            .map(tuple -> {
+	                Flight flight = tuple.getT1();
+	                List<Passenger> passengers = tuple.getT2();
+	                
+					BookingResponse res=new BookingResponse(); 
+			        res.setPnr(booking.getPnr());
+			        res.setStatus(booking.getStatus());
+			        res.setTripType(booking.getTripType());
+			        res.setTotalAmount(booking.getTotalAmount());
+			        res.setBookingDateTime(booking.getBookingDateTime());
+			        res.setBookerEmailId(booking.getBookerEmailId());
+			        res.setSource(flight.getSource());
+			        res.setDestination(flight.getDestination());
+			        res.setAirlineName(flight.getAirlineName());
+			       // res.setFlightId(booking.getFlightId());
+			        
+			        List<PassengerResponse> passengerResponses=passengers.stream()
+			        	.map(p->{
+			        		PassengerResponse pr=new PassengerResponse();
+			        		pr.setName(p.getName());
+			        		pr.setAge(p.getAge());
+			                pr.setGender(p.getGender());
+			                pr.setSeatNo(p.getSeatNo());
+			                pr.setMealType(p.getMealType());
+			                return pr;	
+			        	})
+			        	.toList();
+			        res.setPassengers(passengerResponses);
+			        return res;
+				});
 	}
 	
 }

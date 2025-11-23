@@ -5,7 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import com.flightwebflux.model.Booking;
 
+import reactor.core.publisher.Mono;
+
 @Repository
 public interface BookingRepository extends ReactiveMongoRepository<Booking,String> {
+
+	Mono<Booking> findByPnr(String pnr);
 
 }
