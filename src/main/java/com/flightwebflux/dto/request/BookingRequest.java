@@ -15,8 +15,8 @@ import lombok.Data;
 @Data
 public class BookingRequest {
 
-	@NotBlank
-	String flightId;
+//	@NotBlank
+//	String flightId;
 	
 	@NotBlank  @Email
 	String bookerEmailId;

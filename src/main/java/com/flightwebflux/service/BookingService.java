@@ -7,5 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface BookingService {
 
-	Mono<Booking> createBooking(BookingRequest booking);
+	Mono<Booking> createBooking(String flightId, BookingRequest request);
+	
+	
 }
