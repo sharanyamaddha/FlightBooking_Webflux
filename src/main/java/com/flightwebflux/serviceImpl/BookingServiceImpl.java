@@ -1,6 +1,7 @@
 package com.flightwebflux.serviceImpl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ import com.flightwebflux.repository.FlightRepository;
 import com.flightwebflux.repository.PassengerRepository;
 import com.flightwebflux.service.BookingService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -140,5 +142,16 @@ public class BookingServiceImpl implements BookingService {
 			        return res;
 				});
 	}
+	
+	
+	@Override
+	public Flux<BookingResponse> getBookingHistory(String bookerEmailId){
+		return bookingRepository.findByBookerEmailIdOrderByBookingDateTimeDesc(bookerEmailId)
+				 .flatMap(this::mapToBookingResponse);
+		    	    
+
+				}
+		
+	
 	
 }

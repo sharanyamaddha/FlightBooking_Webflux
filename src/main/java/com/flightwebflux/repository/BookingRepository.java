@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.flightwebflux.model.Booking;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -12,4 +13,5 @@ public interface BookingRepository extends ReactiveMongoRepository<Booking,Strin
 
 	Mono<Booking> findByPnr(String pnr);
 
+	Flux<Booking> findByBookerEmailIdOrderByBookingDateTimeDesc(String bookerEmailId);
 }

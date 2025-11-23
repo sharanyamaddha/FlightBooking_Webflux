@@ -25,6 +25,8 @@ public class Booking {
 	
 	String flightId;
 	
+	String airlineName;
+	
 	String pnr;
 	
 	LocalDateTime bookingDateTime;
