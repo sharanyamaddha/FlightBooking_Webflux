@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.flightwebflux.dto.request.BookingRequest;
 import com.flightwebflux.dto.request.FlightRequest;
 import com.flightwebflux.dto.response.BookingResponse;
+import com.flightwebflux.repository.AirlineRepository;
 import com.flightwebflux.service.BookingService;
 
 import jakarta.validation.Valid;
@@ -22,8 +23,15 @@ import reactor.core.publisher.Mono;
 @RestController
 public class BookingController {
 
+    private final AirlineRepository airlineRepository;
+
 	@Autowired
 	BookingService bookingService;
+
+
+    BookingController(AirlineRepository airlineRepository) {
+        this.airlineRepository = airlineRepository;
+    }
 
 	
 	@PostMapping("/booking/{flightId}")
@@ -48,12 +56,12 @@ public class BookingController {
 		
 	}
 	
-//	@DeleteMapping("/booking/cancel/{pnr}")
-//	public Mono<ResponseEntity<BookingResponse>> cancelBooking(@PathVariable("pnr") String pnr){
-//		return bookingService.cancelBooking(pnr)
-//				.map()
-//		
-//	}
+	@DeleteMapping("/booking/cancel/{pnr}")
+	public Mono<ResponseEntity<String>> cancelBooking(@PathVariable("pnr") String pnr){
+		return bookingService.cancelBooking(pnr)
+				.map(message -> ResponseEntity.ok(message));
+		
+	}
 
 
 }

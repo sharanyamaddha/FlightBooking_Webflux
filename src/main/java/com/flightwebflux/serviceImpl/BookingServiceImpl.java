@@ -1,5 +1,6 @@
 package com.flightwebflux.serviceImpl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,5 +154,44 @@ public class BookingServiceImpl implements BookingService {
 				}
 		
 	
+	
+	@Override
+	public Mono<String> cancelBooking(String pnr){
+		return bookingRepository.findByPnr(pnr)
+				.switchIfEmpty(Mono.error(new BusinessException("Invalid PNR")))
+	            .flatMap(booking -> {
+	            	if(booking.getStatus()==BookingStatus.CANCELLED) {
+	            		return Mono.error(new BusinessException("Booking already cancelled"));
+	            	}
+	            	
+	            	 return flightRepository.findById(booking.getFlightId())
+	                         .switchIfEmpty(Mono.error(new BusinessException("Flight not found for this booking")))
+	                         .flatMap(flight -> {
+	                        	 LocalDateTime bookingTime = booking.getBookingDateTime();
+	                        	 LocalDateTime now = LocalDateTime.now();
+
+	                        	 if (Duration.between(bookingTime, now).toHours() >= 24) {
+	                        	     return Mono.error(new BusinessException("Cancellation allowed only within 24 hours of booking"));
+	                        	 }
+
+	                             booking.setStatus(BookingStatus.CANCELLED);
+	                             Mono<Booking> updatedBookingMono = bookingRepository.save(booking);
+	                             
+	                             Mono<Long> passengerCountMono = passengerRepository.countByPnr(pnr);
+
+	                             Mono<Flight> updatedFlightMono = passengerCountMono
+	                                     .flatMap(count -> {
+	                                         int seatsToFree = count.intValue();
+	                                         flight.setAvailableSeats(flight.getAvailableSeats() + seatsToFree);
+	                                         return flightRepository.save(flight);
+	                                     });
+	                             
+	                             return Mono.when(updatedBookingMono, updatedFlightMono)
+	                                     .thenReturn("Booking cancelled successfully");
+	                         });
+	            });
+
+		
+	}
 	
 }
