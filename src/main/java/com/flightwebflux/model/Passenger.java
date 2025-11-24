@@ -1,13 +1,13 @@
 package com.flightwebflux.model;
 
-import java.time.LocalDateTime;
+
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.flightwebflux.enums.Gender;
 import com.flightwebflux.enums.MealType;
-import com.flightwebflux.enums.TripType;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

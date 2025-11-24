@@ -6,14 +6,14 @@ import com.flightwebflux.dto.request.PassengerRequest;
 import com.flightwebflux.dto.response.BookingResponse;
 import com.flightwebflux.enums.Gender;
 import com.flightwebflux.enums.MealType;
-import com.flightwebflux.model.Booking;
+
 import com.flightwebflux.service.BookingService;
 import com.flightwebflux.repository.AirlineRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
@@ -32,11 +32,11 @@ class BookingControllerTest {
     @Autowired
     private WebTestClient webClient;
 
-    // mock the service and repository used by the controller
-    @MockBean
+
+    @Mock
     private BookingService bookingService;
 
-    @MockBean
+    @Mock
     private AirlineRepository airlineRepository;
 
     @Test

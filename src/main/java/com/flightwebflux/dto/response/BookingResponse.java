@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.flightwebflux.enums.BookingStatus;
 import com.flightwebflux.enums.TripType;
-import com.flightwebflux.model.Passenger;
+
 
 import lombok.Data;
 
@@ -20,7 +20,7 @@ public class BookingResponse {
     private LocalDateTime bookingDateTime;
     TripType tripType;
 
-    //private String flightNo;
+
     private String airlineName;
     private String source;
     private String destination;

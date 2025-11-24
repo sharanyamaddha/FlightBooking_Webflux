@@ -26,7 +26,11 @@
 		<tag/>
 		<url/>
 	</scm>
+
+
 	<properties>
+	  <sonar.organization>sharanyamaddha</sonar.organization>
+
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>

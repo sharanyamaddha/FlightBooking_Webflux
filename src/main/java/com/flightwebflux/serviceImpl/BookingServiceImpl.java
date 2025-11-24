@@ -153,7 +153,7 @@ public class BookingServiceImpl implements BookingService {
 			        res.setSource(flight.getSource());
 			        res.setDestination(flight.getDestination());
 			        res.setAirlineName(flight.getAirlineName());
-			       // res.setFlightId(booking.getFlightId());
+			      
 			        
 			        List<PassengerResponse> passengerResponses=passengers.stream()
 			        	.map(p->{

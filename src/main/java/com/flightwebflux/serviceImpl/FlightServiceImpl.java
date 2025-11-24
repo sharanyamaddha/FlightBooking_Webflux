@@ -87,7 +87,7 @@ public class FlightServiceImpl implements FlightService {
 		String destination=request.getDestination();
 		String airlineName=request.getAirlineName();
 		
-		Flux<Flight> flights;
+
 		
 		if (airlineName == null) {
 	        return flightRepository.findBySourceIgnoreCaseAndDestinationIgnoreCase(source, destination)

@@ -7,6 +7,7 @@ import com.flightwebflux.dto.response.FlightResponse;
 import com.flightwebflux.model.Flight;
 import com.flightwebflux.service.FlightService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +29,7 @@ class FlightControllerTest {
     @Autowired
     private WebTestClient webClient;
 
-    @MockBean
+    @Mock
     private FlightService flightService;
 
     @Test

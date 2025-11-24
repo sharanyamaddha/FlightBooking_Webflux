@@ -25,9 +25,5 @@ public interface FlightRepository extends ReactiveMongoRepository<Flight,String>
 	Flux<Flight> findByAirlineIdIgnoreCase(String airlineId);
 	
 	
-//	Flux<Flight> findByAirlineIdAndSourceIgnoreCaseAndDestinationIgnoreCase(
-//            String airlineId,
-//            String source,
-//            String destination
-//    );
+
 }

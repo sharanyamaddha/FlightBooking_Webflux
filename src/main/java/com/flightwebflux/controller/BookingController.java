@@ -23,15 +23,10 @@ import reactor.core.publisher.Mono;
 @RestController
 public class BookingController {
 
-    private final AirlineRepository airlineRepository;
+    
 
 	@Autowired
 	BookingService bookingService;
-
-
-    BookingController(AirlineRepository airlineRepository) {
-        this.airlineRepository = airlineRepository;
-    }
 
 	
 	@PostMapping("/booking/{flightId}")
