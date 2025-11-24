@@ -1,16 +1,13 @@
 package com.flightwebflux;
 
-
-
+import com.flightwebflux.controller.FlightController;
 import com.flightwebflux.dto.request.FlightRequest;
 import com.flightwebflux.dto.response.FlightResponse;
 import com.flightwebflux.model.Flight;
 import com.flightwebflux.service.FlightService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -22,20 +19,19 @@ import java.time.LocalDateTime;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
+@WebFluxTest(controllers = FlightController.class)
 class FlightControllerTest {
 
     @Autowired
     private WebTestClient webClient;
 
-    @Mock
-    private FlightService flightService;
+    @MockBean
+    private FlightService flightService;     
 
     @Test
     void addFlights_returnsCreatedAndFlightId() {
         Flight saved = new Flight();
-        saved.setFlightId("F-100");
+        saved.setFlightId("F-100"); 
 
         when(flightService.addFlights(any(FlightRequest.class)))
                 .thenReturn(Mono.just(saved));
@@ -54,8 +50,7 @@ class FlightControllerTest {
                 .bodyValue(req)
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody(String.class)
-                .isEqualTo("F-100");
+                                .expectBody(String.class).isEqualTo("F-100");
     }
 
     @Test
@@ -67,8 +62,7 @@ class FlightControllerTest {
         fr.setDestination("BBB");
 
         when(flightService.searchFlights(any(FlightRequest.class)))
-                .thenReturn(Flux.just(fr));
-
+                .thenReturn(Flux.just(fr)); 
         FlightRequest req = new FlightRequest();
         req.setSource("AAA");
         req.setDestination("BBB");

@@ -71,19 +71,19 @@ class FlightServiceImplTest {
 
     @Test
     void addFlights_success_newAirlineAndFlightSaved() {
-        // Simulate airline not present -> saved when saving
+
         when(airlineRepository.findByAirlineName("TestAir")).thenReturn(Mono.empty());
         Airline savedAirline = new Airline();
         savedAirline.setAirlineId("AL-NEW");
         savedAirline.setAirlineName("TestAir");
         when(airlineRepository.save(any(Airline.class))).thenReturn(Mono.just(savedAirline));
 
-        // No existing flight for given airline/time -> find returns empty Flux
+
         when(flightRepository.findByAirlineIdAndSourceAndDestinationAndDepartureDateTime(
                 eq("AL-NEW"), eq("AAA"), eq("BBB"), any(LocalDateTime.class)))
             .thenReturn(Mono.empty());
 
-        // When saving flight, repository returns the flight with id
+
         Flight savedFlight = new Flight();
         savedFlight.setFlightId("F-NEW");
         savedFlight.setAirlineId("AL-NEW");
@@ -99,7 +99,7 @@ class FlightServiceImplTest {
         // Airline exists
         when(airlineRepository.findByAirlineName("TestAir")).thenReturn(Mono.just(sampleAirline));
 
-        // Repository reports an existing flight for that airline/time
+
         when(flightRepository.findByAirlineIdAndSourceAndDestinationAndDepartureDateTime(
                 eq(sampleAirline.getAirlineId()), eq("AAA"), eq("BBB"), any(LocalDateTime.class)))
             .thenReturn(Mono.just(sampleFlight));
@@ -130,8 +130,8 @@ class FlightServiceImplTest {
     @Test
     void searchFlights_bySourceDestination_returnsMappedResponse() {
 
-        // VERY IMPORTANT
-        validRequest.setAirlineName(null);  // triggers source/destination branch
+
+        validRequest.setAirlineName(null); 
 
         when(flightRepository.findBySourceIgnoreCaseAndDestinationIgnoreCase("AAA", "BBB"))
                 .thenReturn(Flux.just(sampleFlight));
