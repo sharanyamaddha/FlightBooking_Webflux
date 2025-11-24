@@ -3,13 +3,17 @@ package com.flightwebflux.serviceImpl;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.flightwebflux.dto.request.BookingRequest;
+import com.flightwebflux.dto.request.PassengerRequest;
 import com.flightwebflux.dto.response.BookingResponse;
 import com.flightwebflux.dto.response.PassengerResponse;
 import com.flightwebflux.enums.BookingStatus;
@@ -52,7 +56,26 @@ public class BookingServiceImpl implements BookingService {
 	                    return Mono.error(new BusinessException("Not enough seats available"));
 					}
 					
-				 String pnr = "PNR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+					List<String> seatNos = request.getPassengers().stream()
+						    .map(PassengerRequest::getSeatNo)
+						    .filter(Objects::nonNull)
+						    .map(s -> s.trim().toUpperCase())
+						    .toList();
+
+						return passengerRepository.findByFlightIdAndSeatNoIn(flightId, seatNos)
+						    .collectList()
+						    .flatMap(conflicts -> {
+						        if (!conflicts.isEmpty()) {
+						            String taken = conflicts.stream()
+						                .map(Passenger::getSeatNo)
+						                .distinct()
+						                .collect(Collectors.joining(", "));
+						            return Mono.error(new BusinessException("Seat(s) already taken: " + taken));
+						        }
+							
+				
+					
+				String pnr = "PNR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 				Booking booking=new Booking();
 				booking.setPnr(pnr);
 				booking.setFlightId(flight.getFlightId());
@@ -60,7 +83,7 @@ public class BookingServiceImpl implements BookingService {
 				booking.setStatus(BookingStatus.BOOKED);
 				booking.setTripType(request.getTripType());
 				booking.setBookingDateTime(LocalDateTime.now());
-				
+				booking.setSeatsBooked(passengerCount);
 				
 				double price=flight.getPrice();
 				double totalAmount=price*passengerCount;
@@ -93,6 +116,8 @@ public class BookingServiceImpl implements BookingService {
 						        
 							});
 				});	
+				
+			});
 	}
 	
 	

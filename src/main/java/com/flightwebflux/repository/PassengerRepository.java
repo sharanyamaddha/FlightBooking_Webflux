@@ -1,5 +1,9 @@
 package com.flightwebflux.repository;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +18,8 @@ public interface PassengerRepository extends ReactiveMongoRepository<Passenger,S
 	Flux<Passenger> findByPnr(String pnr);
 
 	 Mono<Long> countByPnr(String pnr); 
+	 
+	
+	 Flux<Passenger> findByFlightIdAndSeatNoIn(String flightId, Collection<String> seatNos);
+
 }

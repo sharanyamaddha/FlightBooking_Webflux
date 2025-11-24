@@ -69,7 +69,7 @@ public class FlightServiceImpl implements FlightService {
                             .substring(0, Math.min(2, airline.getAirlineName().length()))
                             .toUpperCase();
 
-                    int randomNumber = (int) (Math.random() * 900) + 100; // 100–999
+                    int randomNumber = (int) (Math.random() * 900) + 100; 
 
                     String flightNumber = airlineCode + "-" + randomNumber;
                     flight.setFlightNo(flightNumber);
