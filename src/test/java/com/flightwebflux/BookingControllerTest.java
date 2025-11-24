@@ -1,23 +1,22 @@
 package com.flightwebflux;
 
-
+import com.flightwebflux.controller.BookingController;
 import com.flightwebflux.dto.request.BookingRequest;
 import com.flightwebflux.dto.request.PassengerRequest;
 import com.flightwebflux.dto.response.BookingResponse;
 import com.flightwebflux.enums.Gender;
 import com.flightwebflux.enums.MealType;
-
+import com.flightwebflux.enums.TripType;
 import com.flightwebflux.service.BookingService;
-import com.flightwebflux.repository.AirlineRepository;
+
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -25,42 +24,34 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
+@WebFluxTest(controllers = BookingController.class)
 class BookingControllerTest {
 
     @Autowired
     private WebTestClient webClient;
 
-
-    @Mock
+    @MockBean
     private BookingService bookingService;
-
-    @Mock
-    private AirlineRepository airlineRepository;
 
     @Test
     void createBooking_returnsCreated() {
-        
-        com.flightwebflux.model.Booking savedBooking = new com.flightwebflux.model.Booking();
-        savedBooking.setPnr("PNR-T1");
 
-       
+        com.flightwebflux.model.Booking saved = new com.flightwebflux.model.Booking();
+        saved.setPnr("PNR-T1");
+
         when(bookingService.createBooking(eq("FL-1"), any(BookingRequest.class)))
-                .thenReturn(Mono.just(savedBooking));
+                .thenReturn(Mono.just(saved));
 
-        
         BookingRequest req = new BookingRequest();
         req.setBookerEmailId("user@example.com");
-        
-        req.setTripType(com.flightwebflux.enums.TripType.ONE_WAY); 
+        req.setTripType(TripType.ONE_WAY);
+
         PassengerRequest p = new PassengerRequest();
         p.setName("Alice");
-        p.setGender(Gender.FEMALE);      
-        p.setAge(28);          
+        p.setGender(Gender.FEMALE);
+        p.setAge(28);
         p.setSeatNo("1A");
         p.setMealType(MealType.VEG);
-
 
         req.setPassengers(List.of(p));
 
@@ -73,14 +64,13 @@ class BookingControllerTest {
                 .isEqualTo("PNR-T1");
     }
 
-
     @Test
     void getBookingByPnr_returnsBookingResponse() {
-        BookingResponse resp = new BookingResponse();
-        resp.setPnr("PNR-GET");
-        resp.setBookerEmailId("user@example.com");
+        BookingResponse res = new BookingResponse();
+        res.setPnr("PNR-GET");
 
-        when(bookingService.getBookingByPnr("PNR-GET")).thenReturn(Mono.just(resp));
+        when(bookingService.getBookingByPnr("PNR-GET"))
+                .thenReturn(Mono.just(res));
 
         webClient.get().uri("/booking/PNR-GET")
                 .exchange()
@@ -94,7 +84,8 @@ class BookingControllerTest {
         BookingResponse r1 = new BookingResponse(); r1.setPnr("P1");
         BookingResponse r2 = new BookingResponse(); r2.setPnr("P2");
 
-        when(bookingService.getBookingHistory("user@example.com")).thenReturn(Flux.just(r1, r2));
+        when(bookingService.getBookingHistory("user@example.com"))
+                .thenReturn(Flux.just(r1, r2));
 
         webClient.get().uri("/booking/history/user@example.com")
                 .exchange()
@@ -105,7 +96,8 @@ class BookingControllerTest {
 
     @Test
     void cancelBooking_returnsOkMessage() {
-        when(bookingService.cancelBooking("PNR-C")).thenReturn(Mono.just("Booking cancelled successfully"));
+        when(bookingService.cancelBooking("PNR-C"))
+                .thenReturn(Mono.just("Booking cancelled successfully"));
 
         webClient.delete().uri("/booking/cancel/PNR-C")
                 .exchange()
