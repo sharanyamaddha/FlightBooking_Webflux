@@ -199,7 +199,7 @@ public class BookingServiceImpl implements BookingService {
 	                        	 LocalDateTime bookingTime = booking.getBookingDateTime();
 	                        	 LocalDateTime now = LocalDateTime.now();
 
-	                        	 if (Duration.between(bookingTime, now).toMinutes() >= 1) {
+	                        	 if (Duration.between(bookingTime, now).toHours() >= 24) {
 	                        	     return Mono.error(new BadRequestException("Cancellation allowed only within 24 hours of booking"));
 	                        	 }
 
