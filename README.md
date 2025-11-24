@@ -9,18 +9,18 @@ It includes features like flight management, seat validation, passenger handling
 
 **API Overview**
 
-1.POST /api/v1.0/flight/airline/inventory/add
+1.POST /api/flight/add
 
 Adds the inventory or schedule for an existing airline.
 This API is used to create or update flight schedules, including details like available seats, timings, and other flight metadata.
 
-2.POST /api/v1.0/flight/search
+2.POST /api/flight/search
 
 Searches for flights based on criteria such as origin, destination, and airline name.
 This endpoint helps users find all available flights matching their search filters.
 
 
-3.POST /api/v1.0/flight/booking/{flightid}
+3.POST /api/booking/{flightid}
 
 Creates a new ticket booking for the given flight ID.
 It handles validations such as:
@@ -33,17 +33,17 @@ Saving passenger details
 
 Preventing double bookings
 
-4.GET /api/v1.0/flight/ticket/{pnr}
+4.GET /api/booking/{pnr}
 
 Retrieves ticket details using the PNR number.
 This API returns booking information like passenger details, flight info, and booking status.
 
-5.GET /api/v1.0/flight/booking/history/{emailId}
+5.GET /api/booking/history/{emailId}
 
 Fetches the booking history for a specific user based on their email ID.
 Helps users view all past and current bookings.
 
-6.DELETE /api/v1.0/flight/booking/cancel/{pnr}
+6.DELETE /api/booking/cancel/{pnr}
 
 Cancels a booked ticket using the PNR.
 Before cancellation, the system verifies the booking status and ensures that the request follows the cancellation rules .
