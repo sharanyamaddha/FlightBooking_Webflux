@@ -18,7 +18,9 @@ import com.flightwebflux.dto.response.BookingResponse;
 import com.flightwebflux.dto.response.PassengerResponse;
 import com.flightwebflux.enums.BookingStatus;
 import com.flightwebflux.enums.TripType;
+import com.flightwebflux.exceptions.BadRequestException;
 import com.flightwebflux.exceptions.BusinessException;
+import com.flightwebflux.exceptions.ConflictException;
 import com.flightwebflux.model.Booking;
 import com.flightwebflux.model.Flight;
 import com.flightwebflux.model.Passenger;
@@ -173,7 +175,9 @@ public class BookingServiceImpl implements BookingService {
 	@Override
 	public Flux<BookingResponse> getBookingHistory(String bookerEmailId){
 		return bookingRepository.findByBookerEmailIdOrderByBookingDateTimeDesc(bookerEmailId)
-				 .flatMap(this::mapToBookingResponse);
+				 .flatMap(this::mapToBookingResponse)
+				 .switchIfEmpty(Mono.error(new BusinessException(
+						 "No bookings found for email: " + bookerEmailId)));
 		    	    
 
 				}
@@ -186,7 +190,7 @@ public class BookingServiceImpl implements BookingService {
 				.switchIfEmpty(Mono.error(new BusinessException("Invalid PNR")))
 	            .flatMap(booking -> {
 	            	if(booking.getStatus()==BookingStatus.CANCELLED) {
-	            		return Mono.error(new BusinessException("Booking already cancelled"));
+	            		return Mono.error(new ConflictException("Booking already cancelled"));
 	            	}
 	            	
 	            	 return flightRepository.findById(booking.getFlightId())
@@ -195,8 +199,8 @@ public class BookingServiceImpl implements BookingService {
 	                        	 LocalDateTime bookingTime = booking.getBookingDateTime();
 	                        	 LocalDateTime now = LocalDateTime.now();
 
-	                        	 if (Duration.between(bookingTime, now).toHours() >= 24) {
-	                        	     return Mono.error(new BusinessException("Cancellation allowed only within 24 hours of booking"));
+	                        	 if (Duration.between(bookingTime, now).toMinutes() >= 1) {
+	                        	     return Mono.error(new BadRequestException("Cancellation allowed only within 24 hours of booking"));
 	                        	 }
 
 	                             booking.setStatus(BookingStatus.CANCELLED);

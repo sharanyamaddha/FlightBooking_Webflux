@@ -20,4 +20,24 @@ public class GlobalExceptionHandler {
                 .body(body);
     }
 	
+	@ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Map<String, String>> handleConflict(ConflictException ex) {
+	       Map<String, String> body = new LinkedHashMap<>();
+	        body.put("message", ex.getMessage()); 
+	        return ResponseEntity
+	                .status(409)  
+	                .body(body);
+
+    }
+	
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequest(BadRequestException ex) {
+    	Map<String, String> body = new LinkedHashMap<>();
+        body.put("message", ex.getMessage()); 
+        return ResponseEntity
+                .status(400)  
+                .body(body);
+
+    }
+	
 }
