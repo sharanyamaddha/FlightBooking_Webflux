@@ -4,6 +4,7 @@ This project is a reactive Flight Booking System built using Spring WebFlux and 
 The goal of the application is to manage flights and bookings in a non-blocking, high-performance way, handling multiple requests efficiently using reactive streams (Mono/Flux).
 It includes features like flight management, seat validation, passenger handling, and booking cancellation logic, all implemented with proper exception handling and reactive programming principles.
 
+**ER Diagram**
 <img width="1242" height="523" alt="image" src="https://github.com/user-attachments/assets/bac2f1c5-2c21-4340-9a37-21c5817dde96" />
 
 
